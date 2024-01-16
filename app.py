@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 from backend.auth.auth_utils import get_authenticated_user_details
 from backend.history.cosmosdbservice import CosmosConversationClient
 
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+logger = logging.getLogger(__name__)
+logger.addHandler(AzureLogHandler(connection_string=os.environ.get("AZURE_APPINSIGHT_CONNECT")))
+
 load_dotenv()
 
 app = Flask(__name__, static_folder="static")
