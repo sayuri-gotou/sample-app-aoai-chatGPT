@@ -15,7 +15,7 @@ from backend.history.cosmosdbservice import CosmosConversationClient
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 logger = logging.getLogger(__name__)
-logger.addHandler(AzureLogHandler(connection_string=os.environ.get("InstrumentationKey=440a07c4-5f60-46c2-955e-f24ec9874c84;IngestionEndpoint=https://canadaeast-0.in.applicationinsights.azure.com/")))
+logger.addHandler(AzureLogHandler(connection_string=os.environ.get("AZURE_APPINSIGHT_CONNECT")))
 
 load_dotenv()
 
