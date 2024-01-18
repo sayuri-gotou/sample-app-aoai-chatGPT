@@ -17,7 +17,6 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 AZURE_APPINSIGHT_CONNECT = os.environ.get("AZURE_APPINSIGHT_CONNECT")
-logger = logging.getLogger(__name__)
 logger.addHandler(AzureLogHandler(connection_string=AZURE_APPINSIGHT_CONNECT))
 logger.debug("Hello Application Insights.")
 
