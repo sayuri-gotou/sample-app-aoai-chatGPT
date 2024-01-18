@@ -13,7 +13,14 @@ from dotenv import load_dotenv
 from backend.auth.auth_utils import get_authenticated_user_details
 from backend.history.cosmosdbservice import CosmosConversationClient
 
+from flask import (Flask, redirect, render_template, request,
+                   send_from_directory, url_for)
+
 from opencensus.ext.azure.log_exporter import AzureLogHandler
+
+fmt = "%(asctime)s %(levelname)s %(name)s %(message)s"
+logging.basicConfig(format=fmt)
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 AZURE_APPINSIGHT_CONNECT = os.environ.get("AZURE_APPINSIGHT_CONNECT")
