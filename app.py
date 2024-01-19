@@ -17,32 +17,31 @@ from flask import (Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
-
 from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace import config_integration
 from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 
 
-fmt = "%(asctime)s %(levelname)s %(name)s %(message)s"
-logging.basicConfig(format=fmt)
+config_integration.trace_integrations(['logging'])
 
 logger = logging.getLogger(__name__)
+
 logger.setLevel(logging.DEBUG)
 AZURE_APPINSIGHT_CONNECT = os.environ.get("AZURE_APPINSIGHT_CONNECT")
-logger.addHandler(AzureLogHandler(connection_string=AZURE_APPINSIGHT_CONNECT))
-logger.debug("Hello Application Insights.")
+handler = AzureLogHandler(connection_string=AZURE_APPINSIGHT_CONNECT)
+handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(handler)
 
 tracer = Tracer(
-    exporter=AzureExporter(),
+    exporter=AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT),
     sampler=ProbabilitySampler(1.0),
 )
-exporter = AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT)
 
-def trace():
-    with tracer.span(name="test") as span:
-        for value in range(5):
-            print(value)
-
+logger.warning('Before the span')
+with tracer.span(name='test'):
+    logger.warning('In the span')
+logger.warning('After the span')
 
 load_dotenv()
 
