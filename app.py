@@ -18,6 +18,11 @@ from flask import (Flask, redirect, render_template, request,
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
+from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace.samplers import ProbabilitySampler
+from opencensus.trace.tracer import Tracer
+
+
 fmt = "%(asctime)s %(levelname)s %(name)s %(message)s"
 logging.basicConfig(format=fmt)
 
@@ -26,6 +31,18 @@ logger.setLevel(logging.DEBUG)
 AZURE_APPINSIGHT_CONNECT = os.environ.get("AZURE_APPINSIGHT_CONNECT")
 logger.addHandler(AzureLogHandler(connection_string=AZURE_APPINSIGHT_CONNECT))
 logger.debug("Hello Application Insights.")
+
+tracer = Tracer(
+    exporter=AzureExporter(),
+    sampler=ProbabilitySampler(1.0),
+)
+exporter = AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT)
+
+def trace():
+    with tracer.span(name="test") as span:
+        for value in range(5):
+            print(value)
+
 
 load_dotenv()
 
