@@ -57,7 +57,7 @@ handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
 logger.addHandler(handler)
 
 tracer = Tracer(
-    exporter=AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT),
+    exporter=AzureExporter(connection_string=APPLICATIONINSIGHTS_CONNECTION_STRING),
     sampler=ProbabilitySampler(1.0),
 )
 
