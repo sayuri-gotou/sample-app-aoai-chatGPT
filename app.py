@@ -46,6 +46,26 @@ DEBUG_LOGGING = DEBUG.lower() == "true"
 if DEBUG_LOGGING:
     logging.basicConfig(level=logging.DEBUG)
     
+config_integration.trace_integrations(['logging'])
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel(logging.DEBUG)
+APPLICATIONINSIGHTS_CONNECTION_STRING = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+handler = AzureLogHandler(connection_string=APPLICATIONINSIGHTS_CONNECTION_STRING)
+handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(handler)
+
+tracer = Tracer(
+    exporter=AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT),
+    sampler=ProbabilitySampler(1.0),
+)
+
+logger.warning('Before the span')
+with tracer.span(name='test'):
+    logger.warning('In the span')
+logger.warning('After the span')
+
 
 # On Your Data Settings
 DATASOURCE_TYPE = os.environ.get("DATASOURCE_TYPE", "AzureCognitiveSearch")
