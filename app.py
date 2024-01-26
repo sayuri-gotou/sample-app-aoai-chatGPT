@@ -61,10 +61,8 @@ tracer = Tracer(
     sampler=ProbabilitySampler(1.0),
 )
 
-logger.warning('Before the span')
 with tracer.span(name='test'):
-    logger.warning('In the span')
-logger.warning('After the span')
+	print('Hello, World!')
 
 
 # On Your Data Settings
