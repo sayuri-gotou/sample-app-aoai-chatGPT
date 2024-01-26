@@ -23,26 +23,6 @@ from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
 
 
-config_integration.trace_integrations(['logging'])
-
-logger = logging.getLogger(__name__)
-
-logger.setLevel(logging.DEBUG)
-AZURE_APPINSIGHT_CONNECT = os.environ.get("AZURE_APPINSIGHT_CONNECT")
-handler = AzureLogHandler(connection_string=AZURE_APPINSIGHT_CONNECT)
-handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
-logger.addHandler(handler)
-
-tracer = Tracer(
-    exporter=AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT),
-    sampler=ProbabilitySampler(1.0),
-)
-
-logger.warning('Before the span')
-with tracer.span(name='test'):
-    logger.warning('In the span')
-logger.warning('After the span')
-
 load_dotenv()
 
 app = Flask(__name__, static_folder="static")
@@ -65,6 +45,26 @@ DEBUG = os.environ.get("DEBUG", "false")
 DEBUG_LOGGING = DEBUG.lower() == "true"
 if DEBUG_LOGGING:
     logging.basicConfig(level=logging.DEBUG)
+    
+config_integration.trace_integrations(['logging'])
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel(logging.DEBUG)
+AZURE_APPINSIGHT_CONNECT = os.environ.get("AZURE_APPINSIGHT_CONNECT")
+handler = AzureLogHandler(connection_string=AZURE_APPINSIGHT_CONNECT)
+handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(handler)
+
+tracer = Tracer(
+    exporter=AzureExporter(connection_string=AZURE_APPINSIGHT_CONNECT),
+    sampler=ProbabilitySampler(1.0),
+)
+
+logger.warning('Before the span')
+with tracer.span(name='test'):
+    logger.warning('In the span')
+logger.warning('After the span')
 
 # On Your Data Settings
 DATASOURCE_TYPE = os.environ.get("DATASOURCE_TYPE", "AzureCognitiveSearch")
