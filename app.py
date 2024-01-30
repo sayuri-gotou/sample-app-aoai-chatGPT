@@ -528,9 +528,9 @@ def conversation_with_data(request_body):
 			sampler=ProbabilitySampler(1.0),
 		)
 
-		with tracer.span(name='test'):
-			print('if not SHOULD_STREAM')
-
+		with tracer.span(name='not SHOULD_STREAM'):
+			print('not SHOULD_STREAM')
+		
 		r = requests.post(endpoint, headers=headers, json=body)
 		status_code = r.status_code
 		r = r.json()
@@ -558,7 +558,7 @@ def conversation_with_data(request_body):
 			sampler=ProbabilitySampler(1.0),
 		)
 
-		with tracer.span(name='test'):
+		with tracer.span(name='else'):
 			print('else')
 		return Response(stream_with_data(body, headers, endpoint, history_metadata), mimetype='text/event-stream')
 
@@ -648,11 +648,11 @@ def conversation():
 
 def conversation_internal(request_body):
 	try:
-		use_data = should_use_data()
-		if use_data:
+		##use_data = should_use_data()
+		##if use_data:
 			return conversation_with_data(request_body)
-		else:
-			return conversation_without_data(request_body)
+		##else:
+			##return conversation_without_data(request_body)
 	except Exception as e:
 		logging.exception("Exception in /conversation")
 		return jsonify({"error": str(e)}), 500
