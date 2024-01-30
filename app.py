@@ -513,24 +513,8 @@ def conversation_with_data(request_body):
 	history_metadata = request_body.get("history_metadata", {})
 
 	if not SHOULD_STREAM:
-		config_integration.trace_integrations(['logging'])
-
-		logger = logging.getLogger(__name__)
-
-		logger.setLevel(logging.DEBUG)
-		APPLICATIONINSIGHTS_CONNECTION_STRING = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
-		handler = AzureLogHandler(connection_string=APPLICATIONINSIGHTS_CONNECTION_STRING)
-		handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
-		logger.addHandler(handler)
-
-		tracer = Tracer(
-			exporter=AzureExporter(connection_string=APPLICATIONINSIGHTS_CONNECTION_STRING),
-			sampler=ProbabilitySampler(1.0),
-		)
-
-		with tracer.span(name='not SHOULD_STREAM'):
-			print('not SHOULD_STREAM')
 		
+		logging.debug("if not SHOULD_STREAM")
 		r = requests.post(endpoint, headers=headers, json=body)
 		status_code = r.status_code
 		r = r.json()
@@ -543,23 +527,7 @@ def conversation_with_data(request_body):
 			return Response(format_as_ndjson(result), status=status_code)
 
 	else:
-		config_integration.trace_integrations(['logging'])
-
-		logger = logging.getLogger(__name__)
-
-		logger.setLevel(logging.DEBUG)
-		APPLICATIONINSIGHTS_CONNECTION_STRING = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
-		handler = AzureLogHandler(connection_string=APPLICATIONINSIGHTS_CONNECTION_STRING)
-		handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
-		logger.addHandler(handler)
-
-		tracer = Tracer(
-			exporter=AzureExporter(connection_string=APPLICATIONINSIGHTS_CONNECTION_STRING),
-			sampler=ProbabilitySampler(1.0),
-		)
-
-		with tracer.span(name='else'):
-			print('else')
+		logging.debug("else")
 		return Response(stream_with_data(body, headers, endpoint, history_metadata), mimetype='text/event-stream')
 
 def stream_without_data(response, history_metadata={}):
