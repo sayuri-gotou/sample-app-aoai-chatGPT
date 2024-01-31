@@ -603,10 +603,10 @@ def conversation():
 def conversation_internal(request_body):
     try:
         use_data = should_use_data()
-        if use_data:
-            return conversation_with_data(request_body)
-        else:
-            return conversation_without_data(request_body)
+        #if use_data:
+        return conversation_with_data(request_body)
+        #else:
+            #return conversation_without_data(request_body)
     except Exception as e:
         logging.exception("Exception in /conversation")
         return jsonify({"error": str(e)}), 500
