@@ -33,7 +33,6 @@ def assets(path):
 # Debug settings
 DEBUG = os.environ.get("DEBUG", "false")
 DEBUG_LOGGING = DEBUG.lower() == "true"
-logging.debug(DEBUG)
 if DEBUG_LOGGING:
     logging.basicConfig(level=logging.DEBUG)
 
